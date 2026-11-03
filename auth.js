@@ -1,11 +1,11 @@
-const { betterAuth } = require("better-auth");
-const { mongodbAdapter } = require("@better-auth/mongo-adapter");
-const { MongoClient } = require("mongodb");
+import { betterAuth } from "better-auth";
+import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { MongoClient } from "mongodb";
 
 const mongoClient = new MongoClient(process.env.MONGODB_URI);
 const database = mongoClient.db(process.env.MONGODB_DB || "studiospace");
 
-const auth = betterAuth({
+export const auth = betterAuth({
   database: mongodbAdapter(database),
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:5000",
   secret: process.env.BETTER_AUTH_SECRET,
@@ -26,4 +26,4 @@ const auth = betterAuth({
   }
 });
 
-module.exports = { auth, mongoClient };
+export { mongoClient };
