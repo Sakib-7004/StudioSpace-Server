@@ -17,7 +17,7 @@ Express and MongoDB API for the StudioSpace creative studio marketplace.
 4. Add a MongoDB Atlas connection string and long random secrets.
 5. Set `CLIENT_URL=http://localhost:3000` and `BETTER_AUTH_URL=http://localhost:5000`.
 6. For Google sign-in, create OAuth credentials and add the client ID and secret.
-7. Run `npm run dev`. The API uses port 5000.
+7. Optional: run `npm run seed` once to add six sample studios to an empty database.\n8. Run `npm run dev`. The API uses port 5000.
 
 ## Main endpoints
 - `GET /api/studios`, `GET /api/studios/:id`
