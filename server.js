@@ -1,10 +1,13 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const { toNodeHandler } = require("better-auth/node");
-const { auth } = require("./auth");
-const { connectDatabase } = require("./config/database");
+import "dotenv/config";
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./auth.js";
+import { connectDatabase } from "./config/database.js";
+import authRoutes from "./routes/authRoutes.js";
+import studioRoutes from "./routes/studioRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
 const app = express();
 app.use(cors({
@@ -17,9 +20,9 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.json({ message: "StudioSpace API is running." }));
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
-app.use("/api/session", require("./routes/authRoutes"));
-app.use("/api/studios", require("./routes/studioRoutes"));
-app.use("/api/bookings", require("./routes/bookingRoutes"));
+app.use("/api/session", authRoutes);
+app.use("/api/studios", studioRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 const PORT = process.env.PORT || 5000;
 connectDatabase()
