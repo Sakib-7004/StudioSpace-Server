@@ -1,0 +1,22 @@
+name: Server syntax check
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: node --check server.js
+      - run: node --check auth.js
+      - run: node --check routes/authRoutes.js
+      - run: node --check routes/studioRoutes.js
+      - run: node --check routes/bookingRoutes.js
+      - run: node --check scripts/seed.js
