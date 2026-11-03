@@ -1,12 +1,11 @@
-const express = require("express");
-const { ObjectId } = require("mongodb");
-const { getDatabase } = require("../config/database");
-const requireAuth = require("../middleware/requireAuth");
+import express from "express";
+import { ObjectId } from "mongodb";
+import { getDatabase } from "../config/database.js";
+import requireAuth from "../middleware/requireAuth.js";
 const router = express.Router();
 
 const validId = (id) => ObjectId.isValid(id);
 
-// Public list with beginner-friendly filters and featured limit.
 router.get("/", async (req, res) => {
   try {
     const { category, search, limit } = req.query;
@@ -88,4 +87,4 @@ router.delete("/:id", requireAuth, async (req, res) => {
   res.json({ message: "Studio deleted successfully." });
 });
 
-module.exports = router;
+export default router;
