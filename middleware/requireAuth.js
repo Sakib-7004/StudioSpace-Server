@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-function requireAuth(req, res, next) {
+export default function requireAuth(req, res, next) {
   const token = req.cookies?.studioToken;
   if (!token) return res.status(401).json({ message: "Please log in to continue." });
   try {
@@ -11,5 +11,3 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ message: "Your session expired. Please log in again." });
   }
 }
-
-module.exports = requireAuth;
