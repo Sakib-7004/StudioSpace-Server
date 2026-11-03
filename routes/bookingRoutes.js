@@ -1,7 +1,7 @@
-const express = require("express");
-const { ObjectId } = require("mongodb");
-const { getDatabase } = require("../config/database");
-const requireAuth = require("../middleware/requireAuth");
+import express from "express";
+import { ObjectId } from "mongodb";
+import { getDatabase } from "../config/database.js";
+import requireAuth from "../middleware/requireAuth.js";
 const router = express.Router();
 
 router.post("/", requireAuth, async (req, res) => {
@@ -16,12 +16,9 @@ router.post("/", requireAuth, async (req, res) => {
       return res.status(400).json({ message: "Please choose a valid future time range." });
     }
     const db = getDatabase();
-    // Two time ranges overlap when existing.start < new.end AND existing.end > new.start.
     const collision = await db.collection("bookings").findOne({
-      studioId,
-      status: "Confirmed",
-      startAt: { $lt: end },
-      endAt: { $gt: start }
+      studioId, status: "Confirmed",
+      startAt: { $lt: end }, endAt: { $gt: start }
     });
     if (collision) return res.status(409).json({ message: "This studio is already confirmed for part of that time. Choose another slot." });
 
@@ -57,7 +54,6 @@ router.patch("/:id/cancel", requireAuth, async (req, res) => {
   res.json({ message: "Booking cancelled." });
 });
 
-// Hosts can confirm a pending booking; overlap check is repeated at confirmation time.
 router.patch("/:id/confirm", requireAuth, async (req, res) => {
   if (!ObjectId.isValid(req.params.id)) return res.status(400).json({ message: "Invalid booking ID." });
   const db = getDatabase();
@@ -72,4 +68,4 @@ router.patch("/:id/confirm", requireAuth, async (req, res) => {
   res.json({ message: "Booking confirmed." });
 });
 
-module.exports = router;
+export default router;
