@@ -43,7 +43,7 @@ router.get("/me", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("studioToken");
+  res.clearCookie("studioToken", {\n    httpOnly: true,\n    secure: process.env.NODE_ENV === "production",\n    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"\n  });
   res.json({ message: "Logged out successfully." });
 });
 
