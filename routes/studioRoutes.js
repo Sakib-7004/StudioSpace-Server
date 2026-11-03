@@ -25,6 +25,13 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Keep this named route before /:id so "owner" is not read as an ID.
+router.get("/owner/mine", requireAuth, async (req, res) => {
+  const studios = await getDatabase().collection("studios")
+    .find({ ownerEmail: req.user.email }).sort({ createdAt: -1 }).toArray();
+  res.json(studios);
+});
+
 router.get("/:id", async (req, res) => {
   if (!validId(req.params.id)) return res.status(400).json({ message: "Invalid studio ID." });
   const studio = await getDatabase().collection("studios").findOne({ _id: new ObjectId(req.params.id) });
@@ -57,18 +64,16 @@ router.post("/", requireAuth, async (req, res) => {
   }
 });
 
-router.get("/owner/mine", requireAuth, async (req, res) => {
-  const studios = await getDatabase().collection("studios")
-    .find({ ownerEmail: req.user.email }).sort({ createdAt: -1 }).toArray();
-  res.json(studios);
-});
-
 router.patch("/:id", requireAuth, async (req, res) => {
   if (!validId(req.params.id)) return res.status(400).json({ message: "Invalid studio ID." });
   const collection = getDatabase().collection("studios");
+  const safeUpdates = { ...req.body };
+  delete safeUpdates.ownerEmail;
+  delete safeUpdates.ownerId;
+  delete safeUpdates.ownerName;
   const result = await collection.updateOne(
     { _id: new ObjectId(req.params.id), ownerEmail: req.user.email },
-    { $set: { ...req.body, updatedAt: new Date() } }
+    { $set: { ...safeUpdates, hourlyRate: Number(safeUpdates.hourlyRate), updatedAt: new Date() } }
   );
   if (!result.matchedCount) return res.status(404).json({ message: "Studio not found or you do not own it." });
   res.json(await collection.findOne({ _id: new ObjectId(req.params.id) }));
