@@ -1,5 +1,5 @@
-require("dotenv").config();
-const { connectDatabase, getDatabase } = require("../config/database");
+import "dotenv/config";
+import { connectDatabase, getDatabase } from "../config/database.js";
 
 const sampleStudios = [
   { title: "Golden Hour Photo Studio", category: "Photo Studio", hourlyRate: 45, securityDeposit: 50, maxCapacity: 8, location: "Gulshan, Dhaka", imageUrl: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1200", overview: "A bright portrait studio with soft natural light, clean backdrops and room for a small creative team.", amenities: ["Lighting equipment", "Makeup station", "Air conditioning"], ownerName: "StudioSpace Demo Host", ownerEmail: "demo-host@studiospace.test", ownerId: "demo-host", rating: 4.9, reviewCount: 12 },
