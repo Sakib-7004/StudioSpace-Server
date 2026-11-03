@@ -1,14 +1,15 @@
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const { auth } = require("../auth");
-const { getDatabase } = require("../config/database");
+import express from "express";
+import jwt from "jsonwebtoken";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../auth.js";
+import { getDatabase } from "../config/database.js";
 const router = express.Router();
 
 // Better Auth owns registration, login, Google OAuth and session cookies.
 // After login, the client calls this endpoint to create the assignment JWT cookie.
 router.post("/sync-token", async (req, res) => {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
+    const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
     if (!session?.user) return res.status(401).json({ message: "Please sign in first." });
     const user = {
       id: session.user.id,
@@ -34,7 +35,7 @@ router.post("/sync-token", async (req, res) => {
 
 router.get("/me", async (req, res) => {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
+    const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
     if (!session?.user) return res.status(401).json({ message: "Not logged in." });
     res.json({ user: session.user });
   } catch {
@@ -43,8 +44,12 @@ router.get("/me", async (req, res) => {
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("studioToken", {\n    httpOnly: true,\n    secure: process.env.NODE_ENV === "production",\n    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"\n  });
+  res.clearCookie("studioToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
+  });
   res.json({ message: "Logged out successfully." });
 });
 
-module.exports = router;
+export default router;
